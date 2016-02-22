@@ -11,6 +11,7 @@ Different ways of entertaining the user while progress is progressing in console
 		// (...)
 		// do stuff and periodically:
 		spinner.SetProgress(progressPercentage);
+		// (...)
 	}
 
 which will look something like this:
@@ -27,9 +28,23 @@ which will look something like this:
 	Spinning on its own line...
 	| 96 %
 
+## Progress bar
 
+	using(var bar = new ProgressBar())
+	{
+		// (...)
+		// do stuff and periodically:
+		spinner.SetProgress(progressPercentage);
+		// (...)
+	}
 
+which will look something like this:
 
+	|===================----------------| 25 % |-----------------------------------|
+
+	|===================================| 68 % |==========-------------------------|
+
+	|==================================| 100 % |===================================|
 
 # License
 
