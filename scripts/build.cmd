@@ -38,7 +38,7 @@ echo Building version %version%
 msbuild %projectfile% /p:Configuration=Release
 
 rem ------------ (2) Comment in/out depending on merge demands -------------------------------------
-REM goto skipmerge
+goto skipmerge
 rem ------------------------------------------------------------------------------------------------
 
 if exist "%mergedir%" (
