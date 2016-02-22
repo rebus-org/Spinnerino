@@ -13,7 +13,7 @@ namespace Spinnerino.ConsoleTest
                     .ToList()
                     .ForEach(percentage =>
                     {
-                        for (var index = 0; index < 100; index++)
+                        for (var index = 0; index < 20; index++)
                         {
                             spinner.SetProgress(percentage);
                             Thread.Sleep(1);
