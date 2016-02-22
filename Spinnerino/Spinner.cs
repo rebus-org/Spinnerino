@@ -4,6 +4,13 @@ using Timer = System.Timers.Timer;
 
 namespace Spinnerino
 {
+    /// <summary>
+    /// Creates a simple spinner with a percentage that looks like this: 
+    /// / 14 %
+    /// - 25 %
+    /// | 99 %
+    ///   100 %
+    /// </summary>
     public class Spinner : IDisposable
     {
         static readonly char[] Chars = { '/', '-', '\\', '|' };
