@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{BB6E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spinnerino", "Spinnerino\Spinnerino.csproj", "{31D79594-FA9B-48AC-942A-538965DE8BD6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spinnerino.ConsoleTest", "Spinnerino.ConsoleTest\Spinnerino.ConsoleTest.csproj", "{579639EB-7847-4D4C-94CD-7212B2FEFE81}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{31D79594-FA9B-48AC-942A-538965DE8BD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31D79594-FA9B-48AC-942A-538965DE8BD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31D79594-FA9B-48AC-942A-538965DE8BD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{579639EB-7847-4D4C-94CD-7212B2FEFE81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{579639EB-7847-4D4C-94CD-7212B2FEFE81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{579639EB-7847-4D4C-94CD-7212B2FEFE81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{579639EB-7847-4D4C-94CD-7212B2FEFE81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
