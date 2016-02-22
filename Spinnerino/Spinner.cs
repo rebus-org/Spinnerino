@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Timer = System.Timers.Timer;
 
@@ -11,22 +13,30 @@ namespace Spinnerino
     /// | 99 %
     ///   100 %
     /// </summary>
-    public class Spinner : IDisposable
+    public class Spinner : IDisposable, IProgressPercentageIndicator
     {
-        static readonly char[] Chars = { '/', '-', '\\', '|' };
+        static readonly char[] DefaultChars = @"/-\|".ToCharArray();
+        readonly char[] _chars;
         readonly bool _newlineWhenDone;
-        readonly Timer _timer = new Timer(100);
+        readonly Timer _timer = new Timer(65);
         readonly int _initialCursorLeft = Console.CursorLeft;
         double _progress;
 
-        public Spinner(bool newlineWhenDone = true)
+        /// <summary>
+        /// Constructs the spinner. Optionally by setting <paramref name="newlineWhenDone"/> to true the spinner will go to a new line when it is done.
+        /// The sequence of animated characters can be customized by setting <paramref name="animationCharacters"/> - default is the classic /-|\ sequence.
+        /// </summary>
+        public Spinner(bool newlineWhenDone = true, IEnumerable<char> animationCharacters = null)
         {
             _newlineWhenDone = newlineWhenDone;
+
+            _chars = (animationCharacters ?? DefaultChars).ToArray();
+
             var characterIndex = 0;
 
             _timer.Elapsed += (o, ea) =>
             {
-                var c = Chars[characterIndex % Chars.Length];
+                var c = _chars[characterIndex % _chars.Length];
 
                 Print(c, _progress);
 

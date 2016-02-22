@@ -8,6 +8,7 @@ Different ways of entertaining the user while progress is progressing in console
 
 	using(var spinner = new Spinner())
 	{
+		// (...)
 		// do stuff and periodically:
 		spinner.SetProgress(progressPercentage);
 	}

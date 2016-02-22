@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using Spinnerino;
 
 namespace Spinner.Demo
 {
@@ -11,6 +12,8 @@ namespace Spinner.Demo
             SeparateLines();
 
             Inline();
+
+            CustomCharacters();
         }
 
         /// <summary>
@@ -22,16 +25,7 @@ namespace Spinner.Demo
 
             using (var spinner = new Spinnerino.Spinner())
             {
-                Enumerable.Range(0, 100)
-                    .ToList()
-                    .ForEach(percentage =>
-                    {
-                        for (var index = 0; index < 20; index++)
-                        {
-                            spinner.SetProgress(percentage);
-                            Thread.Sleep(1);
-                        }
-                    });
+                SpinIt(spinner, 20);
             }
 
             Console.WriteLine("Done!");
@@ -46,19 +40,39 @@ namespace Spinner.Demo
 
             using (var spinner = new Spinnerino.Spinner(newlineWhenDone: false))
             {
-                Enumerable.Range(0, 100)
-                    .ToList()
-                    .ForEach(percentage =>
-                    {
-                        for (var index = 0; index < 20; index++)
-                        {
-                            spinner.SetProgress(percentage);
-                            Thread.Sleep(1);
-                        }
-                    });
+                SpinIt(spinner, 20);
             }
 
             Console.WriteLine("Done!");
+        }
+
+        /// <summary>
+        /// Demonstrates how the spinner can loop through a custom sequence of chatacters
+        /// </summary>
+        static void CustomCharacters()
+        {
+            Console.Write("Spinning custom chars... ");
+
+            const string animationCharacters = "~^´`^+=-";
+
+            using (var spinner = new Spinnerino.Spinner(newlineWhenDone: false, animationCharacters: animationCharacters))
+            {
+                SpinIt(spinner, 50);
+            }
+
+            Console.WriteLine("Done!");
+        }
+
+        static void SpinIt(IProgressPercentageIndicator spinner, int sleetMilliseconds)
+        {
+            Enumerable.Range(0, 100)
+                .ToList()
+                .ForEach(percentage =>
+                {
+                    spinner.SetProgress(percentage);
+
+                    Thread.Sleep(sleetMilliseconds);
+                });
         }
     }
 }
