@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{579639EB-7847-4D4C-94CD-7212B2FEFE81}</ProjectGuid>
+    <ProjectGuid>{FBC5626B-0B04-4367-88C7-B6133D89983F}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Spinnerino.ConsoleTest</RootNamespace>
-    <AssemblyName>Spinnerino.ConsoleTest</AssemblyName>
+    <RootNamespace>Spinner.Demo</RootNamespace>
+    <AssemblyName>Spinner.Demo</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

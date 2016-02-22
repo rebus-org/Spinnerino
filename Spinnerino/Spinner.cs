@@ -14,11 +14,14 @@ namespace Spinnerino
     public class Spinner : IDisposable
     {
         static readonly char[] Chars = { '/', '-', '\\', '|' };
+        readonly bool _newlineWhenDone;
         readonly Timer _timer = new Timer(100);
+        readonly int _initialCursorLeft = Console.CursorLeft;
         double _progress;
 
-        public Spinner()
+        public Spinner(bool newlineWhenDone = true)
         {
+            _newlineWhenDone = newlineWhenDone;
             var characterIndex = 0;
 
             _timer.Elapsed += (o, ea) =>
@@ -49,10 +52,10 @@ namespace Spinnerino
 
         void Print(char c, double progress, bool newline = false)
         {
-            Console.CursorLeft = 0;
+            Console.CursorLeft = _initialCursorLeft;
             Console.Write($"{c} {progress:0.##} %     ");
 
-            if (newline)
+            if (newline && _newlineWhenDone)
             {
                 Console.WriteLine();
             }

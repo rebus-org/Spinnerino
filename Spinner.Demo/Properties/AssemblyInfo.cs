@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Spinnerino.ConsoleTest")]
+[assembly: AssemblyTitle("Spinner.Demo")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Spinnerino.ConsoleTest")]
+[assembly: AssemblyProduct("Spinner.Demo")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("579639eb-7847-4d4c-94cd-7212b2fefe81")]
+[assembly: Guid("fbc5626b-0b04-4367-88c7-b6133d89983f")]
 
 // Version information for an assembly consists of the following four values:
 //
