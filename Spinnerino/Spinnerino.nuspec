@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Spinnerino</id>
+    <version>$version$</version>
+    <title>Spinnerino</title>
+    <authors>mookid8000</authors>
+    <owners>mookid8000</owners>
+    <licenseUrl>https://raw.githubusercontent.com/rebus-org/Spinnerino/master/LICENSE.md</licenseUrl>
+    <projectUrl>http://mookid.dk/oncode/tiket</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Animated console spinner thingie</description>
+    <copyright>Copyright 2012-2016</copyright>
+    <tags>monospace ascii text cli command-line</tags>
+    <dependencies>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Spinnerino.dll" target="lib\NET45" />
+    <file src="bin\Release\Spinnerino.xml" target="lib\NET45" />
+  </files>
+</package>
