@@ -4,6 +4,8 @@ A simple .NET console spinner thingie.
 
 Different ways of entertaining the user while progress is progressing in console applications.
 
+
+
 ## Spinner
 
 	using(var spinner = new Spinner())
@@ -39,6 +41,8 @@ A `Spinner` can be customized by overriding its animation characters like this:
 		// (...)
 	}
 
+
+
 ## Progress bar
 
 	using(var bar = new ProgressBar())
@@ -70,6 +74,44 @@ which will turn it into this:
 
 	|###################----------------| 25 % |-----------------------------------|
 
+
+
+
+## Inline progress bar
+
+	Console.Write("Doing something: ")
+
+	using(var bar = new InlineProgressBar())
+	{
+		// (...)
+		// do stuff and periodically:
+		spinner.SetProgress(progressPercentage);
+		// (...)
+	}
+
+which will look something like this:
+
+	Doing something: [##--------] 29 %
+	
+	Doing something: [######----] 63 %
+	
+	Doing something: [##########] 100 %
+
+### Customizations
+
+The `InlineProgressBar` can have its characters customized like this:
+
+	Console.Write("See plus plus: ")
+
+	using(var bar = new InlineProgressBar(completedChar: '+', notCompletedChar: ' ', width: 20)) 
+	{
+		// (...)
+	}
+
+which will turn it into this:
+
+	See plus plus: [+++++++++++++++++   ] 85 %
+	
 
 # License
 

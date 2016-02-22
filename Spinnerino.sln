@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spinner.Demo", "Spinner.Dem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgressBar.Demo", "ProgressBar.Demo\ProgressBar.Demo.csproj", "{B74D55FC-C519-445A-AF40-F6A7EDC92E04}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InlineProgressBar.Demo", "InlineProgressBar.Demo\InlineProgressBar.Demo.csproj", "{EB104BF4-D218-4EFA-ABBC-42DD2BB934DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{B74D55FC-C519-445A-AF40-F6A7EDC92E04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B74D55FC-C519-445A-AF40-F6A7EDC92E04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B74D55FC-C519-445A-AF40-F6A7EDC92E04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB104BF4-D218-4EFA-ABBC-42DD2BB934DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB104BF4-D218-4EFA-ABBC-42DD2BB934DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB104BF4-D218-4EFA-ABBC-42DD2BB934DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB104BF4-D218-4EFA-ABBC-42DD2BB934DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,5 +53,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{FBC5626B-0B04-4367-88C7-B6133D89983F} = {72ED8B76-47F8-4F46-AE34-67018C69467D}
 		{B74D55FC-C519-445A-AF40-F6A7EDC92E04} = {72ED8B76-47F8-4F46-AE34-67018C69467D}
+		{EB104BF4-D218-4EFA-ABBC-42DD2BB934DB} = {72ED8B76-47F8-4F46-AE34-67018C69467D}
 	EndGlobalSection
 EndGlobal
