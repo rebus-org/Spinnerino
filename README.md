@@ -28,6 +28,17 @@ which will look something like this:
 	Spinning on its own line...
 	| 96 %
 
+### Customizations
+
+A `Spinner` can be customized by overriding its animation characters like this:
+
+	var myAnimationChars = "0123456789";
+
+	using(var spinner = new Spinner(animationCharacters: myAnimationChars))
+	{
+		// (...)
+	}
+
 ## Progress bar
 
 	using(var bar = new ProgressBar())
@@ -45,6 +56,20 @@ which will look something like this:
 	|===================================| 68 % |==========-------------------------|
 
 	|==================================| 100 % |===================================|
+
+### Customizations
+
+The `ProgressBar` can have its characters customized like this:
+
+	using(var bar = new ProgressBar(completedChar: '#')) 
+	{
+		// (...)
+	}
+
+which will turn it into this:
+
+	|###################----------------| 25 % |-----------------------------------|
+
 
 # License
 
