@@ -49,7 +49,7 @@ A `Spinner` can be customized by overriding its animation characters like this:
 	{
 		// (...)
 		// do stuff and periodically:
-		spinner.SetProgress(progressPercentage);
+		bar.SetProgress(progressPercentage);
 		// (...)
 	}
 
@@ -85,7 +85,7 @@ which will turn it into this:
 	{
 		// (...)
 		// do stuff and periodically:
-		spinner.SetProgress(progressPercentage);
+		bar.SetProgress(progressPercentage);
 		// (...)
 	}
 
@@ -111,6 +111,49 @@ The `InlineProgressBar` can have its characters customized like this:
 which will turn it into this:
 
 	See plus plus: [+++++++++++++++++   ] 85 %
+	
+## Indefinite progress bar
+
+	Console.WriteLine("Processing data..");
+
+	using (var bar = new IndefiniteProgressBar())
+	{
+		// (...)
+		// do stuff and from time to time:
+		bar.SetAction($"Processed {dataProcessedMb:0.00} MB");
+		// (...)
+	}
+
+which will look something like this:
+
+	|-------------------=========| Processed 0,94 MB |==========-------------------|
+
+	|===================---------| Processed 2,62 MB |--------=====================|
+
+	|-----=======================| Processed 3,83 MB |-----------------------------|
+
+### Customizations
+
+The `IndefiniteProgressBar` can have its characters customized too, and also the direction of the mover. This
+can be used to neat effect to e.g. "download" something:
+
+	var direction = IndefiniteProgressBar.ProgressDirection.RightToLeft;
+
+    using (var bar = new IndefiniteProgressBar(moverChar: '<', backgroundChar: ' ', moverWidth: 5, direction: direction))
+	{
+		// (...)
+		// do stuff and from time to time:
+		bar.SetAction($"Downloading {downloadedDataMb:0.00} MB");
+		// (...)
+	}
+
+which will look something like this:
+
+	|                           | Downloading 0,50 MB |             <<<<<          |
+
+	|                           | Downloading 0,81 MB |       <<<<<                |
+
+	|                           | Downloading 1,11 MB |<<<<<                       |
 	
 
 # License

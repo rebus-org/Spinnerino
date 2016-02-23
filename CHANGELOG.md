@@ -8,3 +8,6 @@
 
 * Added inline progress bar
 
+## 1.0.2
+
+* Added indefinite progress bar
