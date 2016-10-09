@@ -11,3 +11,7 @@
 ## 1.0.2
 
 * Added indefinite progress bar
+
+## 1.0.3
+
+* Add indefinite spinner
