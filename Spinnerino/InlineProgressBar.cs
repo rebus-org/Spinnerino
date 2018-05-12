@@ -29,7 +29,7 @@ namespace Spinnerino
 
             _timer.Elapsed += (o, ea) =>
             {
-                lock (consoleLock)
+                lock (_consoleLock)
                 {
                     Print(_progress);
                 }

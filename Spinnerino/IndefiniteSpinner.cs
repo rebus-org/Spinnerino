@@ -36,7 +36,7 @@ namespace Spinnerino
             {
                 var c = _chars[characterIndex % _chars.Length];
 
-                lock (consoleLock)
+                lock (_consoleLock)
                 {
                     Print(c);
                 }
