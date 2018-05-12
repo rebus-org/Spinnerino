@@ -18,4 +18,4 @@
 
 ## 1.0.4
 
-* Add console lock for asynchronous console writes
+* Add console lock for during console writes on separate threads
