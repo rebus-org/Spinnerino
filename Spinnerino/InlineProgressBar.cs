@@ -6,30 +6,39 @@ namespace Spinnerino
 {
     public class InlineProgressBar : IDisposable, IProgressPercentageIndicator
     {
-        readonly int _width;
-        readonly char _completedChar;
-        readonly char _notCompletedChar;
-        readonly Timer _timer = new Timer(65);
-        readonly int _cursorLeft;
+        private readonly int _width;
+        private readonly char _completedChar;
+        private readonly char _notCompletedChar;
+        private readonly Timer _timer = new Timer(65);
+        private readonly int _cursorLeft;
+        private double _progress;
+        private object _consoleLock;
 
-        double _progress;
-
-        public InlineProgressBar(int width = 10, char completedChar = '#', char notCompletedChar = '-')
+        public InlineProgressBar(int width = 10, char completedChar = '#', char notCompletedChar = '-', object consoleLock = null)
         {
             _width = width;
             _completedChar = completedChar;
             _notCompletedChar = notCompletedChar;
             _cursorLeft = Console.CursorLeft;
+            _consoleLock = consoleLock;
+
+            if (_consoleLock == null)
+            {
+                _consoleLock = new object();
+            }
 
             _timer.Elapsed += (o, ea) =>
             {
-                Print(_progress);
+                lock (_consoleLock)
+                {
+                    Print(_progress);
+                }
             };
 
             _timer.Start();
         }
 
-        void Print(double progress)
+        private void Print(double progress)
         {
             Console.CursorLeft = _cursorLeft;
 

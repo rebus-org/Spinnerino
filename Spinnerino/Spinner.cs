@@ -7,7 +7,7 @@ using Timer = System.Timers.Timer;
 namespace Spinnerino
 {
     /// <summary>
-    /// Creates a simple spinner with a percentage that looks like this: 
+    /// Creates a simple spinner with a percentage that looks like this:
     /// / 14 %
     /// - 25 %
     /// | 99 %
@@ -15,18 +15,19 @@ namespace Spinnerino
     /// </summary>
     public class Spinner : IDisposable, IProgressPercentageIndicator
     {
-        static readonly char[] DefaultChars = @"/-\|".ToCharArray();
-        readonly char[] _chars;
-        readonly bool _newlineWhenDone;
-        readonly Timer _timer = new Timer(65);
-        readonly int _initialCursorLeft = Console.CursorLeft;
-        double _progress;
+        private static readonly char[] DefaultChars = @"/-\|".ToCharArray();
+        private readonly char[] _chars;
+        private readonly bool _newlineWhenDone;
+        private readonly Timer _timer = new Timer(65);
+        private readonly int _initialCursorLeft = Console.CursorLeft;
+        private double _progress;
+        private object _consoleLock;
 
         /// <summary>
         /// Constructs the spinner. Optionally by setting <paramref name="newlineWhenDone"/> to true the spinner will go to a new line when it is done.
         /// The sequence of animated characters can be customized by setting <paramref name="animationCharacters"/> - default is the classic /-|\ sequence.
         /// </summary>
-        public Spinner(bool newlineWhenDone = true, IEnumerable<char> animationCharacters = null)
+        public Spinner(bool newlineWhenDone = true, IEnumerable<char> animationCharacters = null, object consoleLock = null)
         {
             _newlineWhenDone = newlineWhenDone;
 
@@ -34,11 +35,21 @@ namespace Spinnerino
 
             var characterIndex = 0;
 
+            _consoleLock = consoleLock;
+
+            if (_consoleLock == null)
+            {
+                _consoleLock = new object();
+            }
+
             _timer.Elapsed += (o, ea) =>
             {
                 var c = _chars[characterIndex % _chars.Length];
 
-                Print(c, _progress);
+                lock (_consoleLock)
+                {
+                    Print(c, _progress);
+                }
 
                 characterIndex++;
             };
@@ -57,10 +68,10 @@ namespace Spinnerino
         {
             _timer.Dispose();
 
-            Print(' ', 100, newline:true);
+            Print(' ', 100, newline: true);
         }
 
-        void Print(char c, double progress, bool newline = false)
+        private void Print(char c, double progress, bool newline = false)
         {
             Console.CursorLeft = _initialCursorLeft;
             Console.Write($"{c} {progress:0.##} %     ");
