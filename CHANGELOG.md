@@ -15,3 +15,7 @@
 ## 1.0.3
 
 * Add indefinite spinner
+
+## 1.0.4
+
+* Add console lock for InlineProgressBar

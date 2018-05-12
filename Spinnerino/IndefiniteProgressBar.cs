@@ -12,17 +12,18 @@ namespace Spinnerino
             RightToLeft
         }
 
-        readonly Timer _timer = new Timer(35);
-        readonly char _moverChar;
-        readonly char _backgroundChar;
-        readonly ProgressDirection _direction;
-        readonly int _moverWidth;
-        readonly int _bufferWidth;
-        readonly int _cursorTop;
+        private readonly Timer _timer = new Timer(35);
+        private readonly char _moverChar;
+        private readonly char _backgroundChar;
+        private readonly ProgressDirection _direction;
+        private readonly int _moverWidth;
+        private readonly int _bufferWidth;
+        private readonly int _cursorTop;
+        private object _consoleLock;
 
-        string _action = "";
+        private string _action = "";
 
-        public IndefiniteProgressBar(char moverChar = '=', char backgroundChar = '-', int? moverWidth = null, ProgressDirection direction = ProgressDirection.LeftToRight)
+        public IndefiniteProgressBar(char moverChar = '=', char backgroundChar = '-', int? moverWidth = null, ProgressDirection direction = ProgressDirection.LeftToRight, object consoleLock = null)
         {
             _moverChar = moverChar;
             _backgroundChar = backgroundChar;
@@ -36,12 +37,21 @@ namespace Spinnerino
 
             _bufferWidth = Console.BufferWidth;
             _cursorTop = Console.CursorTop;
+            _consoleLock = consoleLock;
+
+            if (_consoleLock == null)
+            {
+                _consoleLock = new object();
+            }
 
             var tick = 0;
 
             _timer.Elapsed += (o, ea) =>
             {
-                Print(_action, tick);
+                lock (_consoleLock)
+                {
+                    Print(_action, tick);
+                }
 
                 tick++;
             };
@@ -53,7 +63,7 @@ namespace Spinnerino
             _action = description?.Trim() ?? "";
         }
 
-        void Print(string action, int tick = -1)
+        private void Print(string action, int tick = -1)
         {
             Console.CursorTop = _cursorTop;
             Console.CursorLeft = 0;
