@@ -18,4 +18,7 @@
 
 ## 1.0.4
 
-* Add console lock for during console writes on separate threads
+* Add console lock for during console writes on separate threads - thanks [davenewza]
+
+
+[davenewza] - https://github.com/davenewza
