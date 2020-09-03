@@ -25,7 +25,7 @@ namespace IndefiniteSpinner.Demo
 
         static void Main()
         {
-            foreach (var animationCharacters  in SpinnerSequences)
+            foreach (var animationCharacters in SpinnerSequences)
             {
                 using (new Spinnerino.IndefiniteSpinner(animationCharacters: animationCharacters))
                 {
