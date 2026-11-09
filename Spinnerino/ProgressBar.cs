@@ -1,95 +1,69 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
-using Timer = System.Timers.Timer;
+using Spinnerino.Internals;
 
-namespace Spinnerino
+namespace Spinnerino;
+
+/// <summary>
+/// Creates a progress bar that spans the width of the console window and looks like this:
+/// <code>
+/// |===================----------------| 25 % |-----------------------------------|
+/// </code>
+/// The progress bar always starts on a new line.
+/// </summary>
+public class ProgressBar : IDisposable, IProgressPercentageIndicator
 {
-    public class ProgressBar : IDisposable, IProgressPercentageIndicator
+    readonly ConsoleAnimation _animation;
+    readonly char _completedChar;
+    readonly char _notCompletedChar;
+
+    double _progress;
+
+    /// <summary>
+    /// Constructs the progress bar, using <paramref name="completedChar"/> and <paramref name="notCompletedChar"/> to fill it.
+    /// Pass a <paramref name="consoleLock"/> if other threads write to the console, and lock on it while doing so.
+    /// </summary>
+    public ProgressBar(char completedChar = '=', char notCompletedChar = '-', object? consoleLock = null)
     {
-        private readonly Timer _timer = new Timer(65);
-        private readonly char _completedChar;
-        private readonly char _notCompletedChar;
-        private readonly int _bufferWidth;
-        private readonly int _cursorTop;
-        private double _progress;
-        private object _consoleLock;
+        _completedChar = completedChar;
+        _notCompletedChar = notCompletedChar;
 
-        public ProgressBar(char completedChar = '=', char notCompletedChar = '-', object consoleLock = null)
-
+        lock (consoleLock ?? new object())
         {
-            _completedChar = completedChar;
-            _notCompletedChar = notCompletedChar;
-            if (Console.CursorLeft > 0)
-            {
-                Console.WriteLine();
-            }
-
-            _bufferWidth = Console.BufferWidth;
-            _cursorTop = Console.CursorTop;
-            _consoleLock = consoleLock;
-
-            if (_consoleLock == null)
-            {
-                _consoleLock = new object();
-            }
-
-            _timer.Elapsed += (o, ea) =>
-            {
-                lock (_consoleLock)
-                {
-                    Print(_progress);
-                }
-            };
-
-            _timer.Start();
+            ConsoleUtil.EnsureBeginningOfLine();
         }
 
-        private void Print(double progress)
-        {
-            Console.CursorTop = _cursorTop;
-            Console.CursorLeft = 0;
+        _animation = new ConsoleAnimation(TimeSpan.FromMilliseconds(65), consoleLock,
+            () => Console.Write($"\r{GetLine(Volatile.Read(ref _progress))}"),
+            RenderFinalFrame);
+    }
 
-            var lineLength = _bufferWidth - 2;
-            var progressLength = (int)(lineLength * (progress / 100));
-            var theRestLength = lineLength - progressLength;
+    /// <inheritdoc />
+    public void SetProgress(double percentage) => Interlocked.Exchange(ref _progress, ConsoleUtil.ClampPercentage(percentage));
 
-            var characters = new List<char>();
+    /// <summary>
+    /// Stops the progress bar, renders it as completed, and moves to the next line
+    /// </summary>
+    public void Dispose() => _animation.Dispose();
 
-            characters.Add('|');
-            characters.AddRange(new string(_completedChar, progressLength));
-            characters.AddRange(new string(_notCompletedChar, theRestLength));
-            characters.Add('|');
+    void RenderFinalFrame(bool interactive)
+    {
+        Console.Write(interactive ? $"\r{GetLine(100)}" : GetLine(100));
+        Console.WriteLine();
+    }
 
-            var label = $"| {progress:0.##} % |";
-            var labelLeft = (int)((lineLength - label.Length) / 2.0 + 1);
+    string GetLine(double progress)
+    {
+        var barLength = Math.Max(ConsoleUtil.GetUsableLineWidth() - 2, 1);
+        var progressLength = Math.Clamp((int)(barLength * (progress / 100)), 0, barLength);
 
-            // only apply the percentage label if the window is pretty wide
-            if (labelLeft > 20)
-            {
-                for (var charIndex = 0; charIndex < label.Length; charIndex++)
-                {
-                    var lineIndex = charIndex + labelLeft;
+        var bar = new char[barLength];
+        bar.AsSpan(0, progressLength).Fill(_completedChar);
+        bar.AsSpan(progressLength).Fill(_notCompletedChar);
 
-                    characters[lineIndex] = label[charIndex];
-                }
-            }
+        // only apply the percentage label if the window is pretty wide
+        Bars.ApplyLabel(bar, $"| {progress:0.##} % |", minimumMargin: 20);
 
-            Console.Write(new string(characters.ToArray()));
-        }
-
-        public void SetProgress(double percentage)
-        {
-            Interlocked.Exchange(ref _progress, Math.Min(100, Math.Max(percentage, 0)));
-        }
-
-        public void Dispose()
-        {
-            _timer.Dispose();
-
-            Print(100);
-
-            Console.WriteLine();
-        }
+        return $"|{new string(bar)}|";
     }
 }

@@ -1,67 +1,73 @@
 ﻿using System;
 using System.Threading;
-using Timer = System.Timers.Timer;
+using Spinnerino.Internals;
 
-namespace Spinnerino
+namespace Spinnerino;
+
+/// <summary>
+/// Creates a small progress bar at the current cursor position that looks like this:
+/// <code>
+/// [######----] 63 %
+/// </code>
+/// </summary>
+public class InlineProgressBar : IDisposable, IProgressPercentageIndicator
 {
-    public class InlineProgressBar : IDisposable, IProgressPercentageIndicator
+    readonly InlineRegion _region = new();
+    readonly ConsoleAnimation _animation;
+    readonly int _width;
+    readonly char _completedChar;
+    readonly char _notCompletedChar;
+
+    double _progress;
+
+    /// <summary>
+    /// Constructs the progress bar. The bar will be <paramref name="width"/> characters wide (not counting the brackets),
+    /// using <paramref name="completedChar"/> and <paramref name="notCompletedChar"/> to fill it.
+    /// Pass a <paramref name="consoleLock"/> if other threads write to the console, and lock on it while doing so.
+    /// </summary>
+    public InlineProgressBar(int width = 10, char completedChar = '#', char notCompletedChar = '-', object? consoleLock = null)
     {
-        private readonly int _width;
-        private readonly char _completedChar;
-        private readonly char _notCompletedChar;
-        private readonly Timer _timer = new Timer(65);
-        private readonly int _cursorLeft;
-        private double _progress;
-        private object _consoleLock;
+        ArgumentOutOfRangeException.ThrowIfLessThan(width, 1);
 
-        public InlineProgressBar(int width = 10, char completedChar = '#', char notCompletedChar = '-', object consoleLock = null)
+        _width = width;
+        _completedChar = completedChar;
+        _notCompletedChar = notCompletedChar;
+
+        _animation = new ConsoleAnimation(TimeSpan.FromMilliseconds(65), consoleLock,
+            () => _region.Write(GetText(Volatile.Read(ref _progress))),
+            RenderFinalFrame);
+    }
+
+    /// <inheritdoc />
+    public void SetProgress(double percentage) => Interlocked.Exchange(ref _progress, ConsoleUtil.ClampPercentage(percentage));
+
+    /// <summary>
+    /// Stops the progress bar, renders it as completed, and moves to the next line
+    /// </summary>
+    public void Dispose() => _animation.Dispose();
+
+    void RenderFinalFrame(bool interactive)
+    {
+        var text = GetText(100);
+
+        if (interactive)
         {
-            _width = width;
-            _completedChar = completedChar;
-            _notCompletedChar = notCompletedChar;
-            _cursorLeft = Console.CursorLeft;
-            _consoleLock = consoleLock;
-
-            if (_consoleLock == null)
-            {
-                _consoleLock = new object();
-            }
-
-            _timer.Elapsed += (o, ea) =>
-            {
-                lock (_consoleLock)
-                {
-                    Print(_progress);
-                }
-            };
-
-            _timer.Start();
+            _region.Write(text);
+        }
+        else
+        {
+            Console.Write(text);
         }
 
-        private void Print(double progress)
-        {
-            Console.CursorLeft = _cursorLeft;
+        Console.WriteLine();
+    }
 
-            var lineLength = _width;
-            var progressLength = (int)(progress / 100.0 * lineLength);
-            var theRestLength = lineLength - progressLength;
-            var progressLine = new string(_completedChar, progressLength);
-            var theRestLine = new string(_notCompletedChar, theRestLength);
+    string GetText(double progress)
+    {
+        var progressLength = Math.Clamp((int)(progress / 100.0 * _width), 0, _width);
+        var progressLine = new string(_completedChar, progressLength);
+        var theRestLine = new string(_notCompletedChar, _width - progressLength);
 
-            Console.Write($"[{progressLine}{theRestLine}] {progress:0.##} %     ");
-        }
-
-        public void SetProgress(double percentage)
-        {
-            Interlocked.Exchange(ref _progress, Math.Min(100, Math.Max(percentage, 0)));
-        }
-
-        public void Dispose()
-        {
-            _timer.Dispose();
-
-            Print(100);
-            Console.WriteLine();
-        }
+        return $"[{progressLine}{theRestLine}] {progress:0.##} %";
     }
 }

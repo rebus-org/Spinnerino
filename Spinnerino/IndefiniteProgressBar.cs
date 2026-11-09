@@ -1,128 +1,120 @@
 ﻿using System;
-using System.Collections.Generic;
-using Timer = System.Timers.Timer;
+using Spinnerino.Internals;
 
-namespace Spinnerino
+namespace Spinnerino;
+
+/// <summary>
+/// Creates a progress bar that spans the width of the console window, with a "mover" running across it continuously,
+/// optionally with a label in the middle. Looks like this:
+/// <code>
+/// |-------------------=========| Processed 0,94 MB |==========-------------------|
+/// </code>
+/// The progress bar always starts on a new line.
+/// </summary>
+public class IndefiniteProgressBar : IDisposable, IActionIndicator
 {
-    public class IndefiniteProgressBar : IDisposable, IActionIndicator
+    /// <summary>
+    /// Direction of the mover
+    /// </summary>
+    public enum ProgressDirection
     {
-        public enum ProgressDirection
-        {
-            LeftToRight,
-            RightToLeft
-        }
+        /// <summary>
+        /// The mover moves from left to right
+        /// </summary>
+        LeftToRight,
 
-        private readonly Timer _timer = new Timer(35);
-        private readonly char _moverChar;
-        private readonly char _backgroundChar;
-        private readonly ProgressDirection _direction;
-        private readonly int _moverWidth;
-        private readonly int _bufferWidth;
-        private readonly int _cursorTop;
-        private object _consoleLock;
-
-        private string _action = "";
-
-        public IndefiniteProgressBar(char moverChar = '=', char backgroundChar = '-', int? moverWidth = null, ProgressDirection direction = ProgressDirection.LeftToRight, object consoleLock = null)
-        {
-            _moverChar = moverChar;
-            _backgroundChar = backgroundChar;
-            _direction = direction;
-            _moverWidth = moverWidth ?? Console.BufferWidth / 2;
-
-            if (Console.CursorLeft > 0)
-            {
-                Console.WriteLine();
-            }
-
-            _bufferWidth = Console.BufferWidth;
-            _cursorTop = Console.CursorTop;
-            _consoleLock = consoleLock;
-
-            if (_consoleLock == null)
-            {
-                _consoleLock = new object();
-            }
-
-            var tick = 0;
-
-            _timer.Elapsed += (o, ea) =>
-            {
-                lock (_consoleLock)
-                {
-                    Print(_action, tick);
-                }
-
-                tick++;
-            };
-            _timer.Start();
-        }
-
-        public void SetAction(string description)
-        {
-            _action = description?.Trim() ?? "";
-        }
-
-        private void Print(string action, int tick = -1)
-        {
-            Console.CursorTop = _cursorTop;
-            Console.CursorLeft = 0;
-
-            var lineLength = _bufferWidth - 2;
-
-            var characters = new List<char>();
-
-            characters.Add('|');
-
-            if (tick >= 0)
-            {
-                var bar = new List<char>(new string(_backgroundChar, lineLength));
-
-                for (var index = tick; index < tick + _moverWidth; index++)
-                {
-                    var barIndex = _direction == ProgressDirection.LeftToRight
-                        ? index % bar.Count
-                        : (bar.Count - index + bar.Count) % bar.Count;
-
-                    bar[barIndex] = _moverChar;
-                }
-
-                characters.AddRange(bar);
-            }
-            else
-            {
-                characters.AddRange(new string(_backgroundChar, lineLength));
-            }
-
-            characters.Add('|');
-
-            if (!string.IsNullOrWhiteSpace(action))
-            {
-                var label = $"| {action} |";
-                var labelLeft = (int)((lineLength - label.Length) / 2.0 + 1);
-
-                // only apply the percentage label if the window is pretty wide
-                if (labelLeft > 10)
-                {
-                    for (var charIndex = 0; charIndex < label.Length; charIndex++)
-                    {
-                        var lineIndex = charIndex + labelLeft;
-
-                        characters[lineIndex] = label[charIndex];
-                    }
-                }
-            }
-
-            Console.Write(new string(characters.ToArray()));
-        }
-
-        public void Dispose()
-        {
-            _timer.Dispose();
-
-            Print("");
-
-            Console.WriteLine();
-        }
+        /// <summary>
+        /// The mover moves from right to left
+        /// </summary>
+        RightToLeft
     }
+
+    readonly ConsoleAnimation _animation;
+    readonly char _moverChar;
+    readonly char _backgroundChar;
+    readonly ProgressDirection _direction;
+    readonly int? _moverWidth;
+
+    volatile string _action = "";
+    long _tick;
+
+    /// <summary>
+    /// Constructs the progress bar, using <paramref name="moverChar"/> and <paramref name="backgroundChar"/> to fill it.
+    /// The width of the mover can be set with <paramref name="moverWidth"/> - by default, it is half the width of the bar.
+    /// Pass a <paramref name="consoleLock"/> if other threads write to the console, and lock on it while doing so.
+    /// </summary>
+    public IndefiniteProgressBar(char moverChar = '=', char backgroundChar = '-', int? moverWidth = null, ProgressDirection direction = ProgressDirection.LeftToRight, object? consoleLock = null)
+    {
+        if (moverWidth is not null)
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(moverWidth.Value, 1, nameof(moverWidth));
+        }
+
+        _moverChar = moverChar;
+        _backgroundChar = backgroundChar;
+        _moverWidth = moverWidth;
+        _direction = direction;
+
+        lock (consoleLock ?? new object())
+        {
+            ConsoleUtil.EnsureBeginningOfLine();
+        }
+
+        _animation = new ConsoleAnimation(TimeSpan.FromMilliseconds(35), consoleLock, RenderFrame, RenderFinalFrame);
+    }
+
+    /// <inheritdoc />
+    public void SetAction(string description) => _action = description?.Trim() ?? "";
+
+    /// <summary>
+    /// Stops the progress bar and moves to the next line
+    /// </summary>
+    public void Dispose() => _animation.Dispose();
+
+    void RenderFrame()
+    {
+        Console.Write($"\r{GetLine(_action, _tick)}");
+        _tick++;
+    }
+
+    void RenderFinalFrame(bool interactive)
+    {
+        // when output is redirected, a line full of background characters is of no use to anyone
+        if (!interactive) return;
+
+        Console.Write($"\r{GetLine("", tick: null)}");
+        Console.WriteLine();
+    }
+
+    string GetLine(string action, long? tick)
+    {
+        var barLength = Math.Max(ConsoleUtil.GetUsableLineWidth() - 2, 1);
+        var bar = new string(_backgroundChar, barLength).ToCharArray();
+
+        if (tick is { } t)
+        {
+            var moverWidth = Math.Min(_moverWidth ?? barLength / 2, barLength);
+
+            for (var offset = 0; offset < moverWidth; offset++)
+            {
+                var position = t + offset;
+
+                var index = _direction == ProgressDirection.LeftToRight
+                    ? Modulo(position, barLength)
+                    : Modulo(-position, barLength);
+
+                bar[index] = _moverChar;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(action))
+        {
+            // only apply the label if the window is pretty wide
+            Bars.ApplyLabel(bar, $"| {action} |", minimumMargin: 10);
+        }
+
+        return $"|{new string(bar)}|";
+    }
+
+    static int Modulo(long value, int modulus) => (int)((value % modulus + modulus) % modulus);
 }

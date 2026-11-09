@@ -14,6 +14,7 @@ if not exist "%destination%" (
   echo Could not find %destination%
   echo.
   echo Did you remember to build the packages before running this script?
+  goto exit_fail
 )
 
 set nuget=%reporoot%\tools\NuGet\NuGet.exe

@@ -1,6 +1,6 @@
 # Spinnerino
 
-A simple .NET console spinner thingie.
+A simple .NET console spinner thingie. Targets .NET 10.
 
 Different ways of entertaining the user while progress is progressing in console applications.
 
@@ -159,6 +159,11 @@ which will look something like this:
 ### Asynchronous console updates
 
 A lock object can be optionally passed into each spinner thingie's constructor. This allows you to lock around spinner updates when there are console writes occurring on other threads.
+
+### Redirected output
+
+When console output is redirected (e.g. piped to a file or captured by a CI system), nothing is animated - only the
+final state (e.g. `100 %`) is written, so your logs stay clean.
 
 
 # License

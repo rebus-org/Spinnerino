@@ -1,7 +1,12 @@
-﻿namespace Spinnerino
+namespace Spinnerino;
+
+/// <summary>
+/// Indicators capable of showing a description of what is currently going on should implement this
+/// </summary>
+public interface IActionIndicator
 {
-    public interface IActionIndicator
-    {
-        void SetAction(string description);
-    }
+    /// <summary>
+    /// Sets the description of what is currently going on
+    /// </summary>
+    void SetAction(string description);
 }
