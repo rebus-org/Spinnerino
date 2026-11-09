@@ -1,25 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <IsAotCompatible>true</IsAotCompatible>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
+	<PropertyGroup>
+		<IsAotCompatible>true</IsAotCompatible>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <PackageId>Spinnerino</PackageId>
-    <Authors>Mogens Heller Grabe</Authors>
-    <Description>Different ways of entertaining the user while progress is progressing in console applications: spinners, progress bars, and indefinite progress bars.</Description>
-    <PackageTags>console;cli;spinner;progress;progressbar</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/rebus-org/Spinnerino</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/rebus-org/Spinnerino</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<PackageId>Spinnerino</PackageId>
+		<Authors>Mogens Heller Grabe</Authors>
+		<Description>Different ways of entertaining the user while progress is progressing in console applications: spinners, progress bars, and indefinite progress bars.</Description>
+		<PackageTags>console;cli;spinner;progress;progressbar</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/rebus-org/Spinnerino</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/rebus-org/Spinnerino</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\README.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
 </Project>
