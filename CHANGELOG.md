@@ -29,4 +29,5 @@
 * Disposing more than once is now harmless
 * Nullable annotations, XML docs, and NuGet package metadata
 
-[davenewza] - https://github.com/davenewza
+
+[davenewza]: https://github.com/davenewza

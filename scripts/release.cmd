@@ -26,7 +26,7 @@ if exist "%deploydir%" (
 
 pushd %root%
 
-dotnet restore
+dotnet restore "%root%\%project%"
 if %ERRORLEVEL% neq 0 (
 	popd
  	goto exit_fail
